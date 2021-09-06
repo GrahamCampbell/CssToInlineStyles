@@ -22,25 +22,14 @@ matrix:
       env: setup=lowest
     - php: 7.0
       dist: xenial
-    - php: 7.1
-      dist: bionic
-    - php: 7.2
-      dist: bionic
-    - php: 7.3
-      dist: bionic
-    - php: 7.4
-      dist: bionic
-    - php: nightly
-      dist: bionic
 
 install:
   - if [[ $setup = 'basic' && "$TRAVIS_PHP_VERSION" != "nightly" ]]; then travis_retry composer install --prefer-dist --no-interaction; fi
   - if [[ $setup = 'lowest' && "$TRAVIS_PHP_VERSION" != "nightly" ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable; fi
-  - if [[ "$TRAVIS_PHP_VERSION" = "nightly" ]]; then travis_retry composer install --prefer-dist --no-interaction --ignore-platform-reqs; fi
 
 script:
   - vendor/bin/phpunit --verbose --coverage-clover=coverage.clover
 
 after_success:
-  - if [[ "$TRAVIS_PHP_VERSION" != "nightly" ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
-  - if [[ "$TRAVIS_PHP_VERSION" != "nightly" ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
